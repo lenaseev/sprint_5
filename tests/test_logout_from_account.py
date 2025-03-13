@@ -1,44 +1,22 @@
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
+from locators import LoginPageLocators
 
 
-def test_test_for_logut_of_account():
-    driver = webdriver.Chrome()
-    driver.get("https://stellarburgers.nomoreparties.site/login")  # Переход на главную страницу
-
-    # Ожидание загрузки формы входа
-    WebDriverWait(driver, 3).until(
-        EC.presence_of_element_located((By.XPATH, "//input[@name='name']"))
-    )
-
-    # Ввод данных для авторизации
-    driver.find_element(By.XPATH, "//input[@name='name']").send_keys("elena_sushko_19_213@gmail.com")
-    driver.find_element(By.NAME, "Пароль").send_keys("kkmo4321")
-
-    # Клик по кнопке входа
-    driver.find_element(By.XPATH, "//*[@id='root']/div/main/div/form/button").click()
-
-    # Ожидание успешного входа (по появлению элемента после входа)
-    WebDriverWait(driver, 3).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='root']/div/header/nav/ul/li[1]/a/p"))
-    )
+def test_test_for_logut_of_account(test_login_login_button):
+    driver = test_login_login_button
 
     # Переход в личный кабинет
-    personal_account_button = driver.find_element(By.XPATH, "//*[@id='root']/div/header/nav/a/p")
-    personal_account_button.click()
+    driver.find_element(*LoginPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
 
-    # Ожидаем загрузки страницы личного кабинета
+    # Ожидание перехода в личный кабинет
     WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='root']/div/main/div/nav/ul/li[1]/a"))
+        EC.visibility_of_element_located(LoginPageLocators.EXIT_BUTTON)
     )
 
-    # Проверка, что мы на странице личного кабинета
-    personal_account_page = driver.find_element(By.XPATH, "//*[@id='root']/div/main/div/nav/ul/li[1]/a")
-    assert personal_account_page.is_displayed(), "Удалось перейти в личный кабинет."
-
     # Выход из аккаунта
-    log_out_button = driver.find_element(By.XPATH, "//*[@id='root']/div/main/div/nav/ul/li[3]/button")
-    log_out_button.click()
+    driver.find_element(*LoginPageLocators.EXIT_BUTTON).click()
 
+    # Проверка, что мы на странице входа
+    login_page = driver.find_element(*LoginPageLocators.LOGIN_BUTTON)
+    assert login_page.is_displayed(), "Не удалось выйти из аккаунта."

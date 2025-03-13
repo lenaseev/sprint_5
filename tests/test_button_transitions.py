@@ -1,80 +1,80 @@
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
+from locators import LoginPageLocators
 
-def test_button_navigation():
-    driver = webdriver.Chrome()
-    driver.get("https://stellarburgers.nomoreparties.site/login")  # Переход на главную страницу
-
-    # Ожидание загрузки формы входа
-    WebDriverWait(driver, 3).until(
-        EC.presence_of_element_located((By.XPATH, "//input[@name='name']"))
-    )
-
-    # Ввод данных для авторизации
-    driver.find_element(By.XPATH, "//input[@name='name']").send_keys("elena_sushko_19_213@gmail.com")
-    driver.find_element(By.NAME, "Пароль").send_keys("kkmo4321")
-
-    # Клик по кнопке входа
-    driver.find_element(By.XPATH, "//*[@id='root']/div/main/div/form/button").click()
-
-    # Ожидание успешного входа (по появлению элемента после входа)
-    WebDriverWait(driver, 3).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='root']/div/header/nav/ul/li[1]/a/p"))
-    )
+def test_button_navigation(test_login_login_button):
+    driver = test_login_login_button
 
     # Переход в личный кабинет
-    personal_account_button = driver.find_element(By.XPATH, "//*[@id='root']/div/header/nav/a/p")
-    personal_account_button.click()
-
-    # Ожидаем загрузки страницы личного кабинета
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='root']/div/main/div/nav/ul/li[1]/a"))
-    )
+    driver.find_element(*LoginPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
 
     # Проверка, что мы на странице личного кабинета
-    personal_account_page = driver.find_element(By.XPATH, "//*[@id='root']/div/main/div/nav/ul/li[1]/a")
+    personal_account_page = driver.find_element(*LoginPageLocators.PERSONAL_ACCOUNT_BUTTON)
     assert personal_account_page.is_displayed(), "Удалось перейти в личный кабинет."
 
-    # Переход из личного кабинета в конструктор
-    constructor_button = driver.find_element(By.XPATH, "//*[@id='root']/div/header/nav/ul/li[1]/a/p")
-    constructor_button.click()
-
-    # Проверка, что мы на странице конструктора
-    constructor_page = driver.find_element(By.XPATH, "//*[@id='root']/div/header/nav/ul/li[1]/a/p")
-    assert constructor_page.is_displayed(), "Не удалось перейти в конструктор."
-
-    # Переход в раздел «Булки»
-    buns_button = driver.find_element(By.XPATH, "//*[@id='root']/div/main/section[1]/div[1]/div[3]/span")
-    buns_button.click()
-
-    # Переход в раздел «Соусы»
-    sauces_button = driver.find_element(By.XPATH, "//*[@id='root']/div/main/section[1]/div[1]/div[2]/span")
-    sauces_button.click()
-
-    # Переход в раздел «Начинки»
-    fillings_button = driver.find_element(By.XPATH, "//*[@id='root']/div/main/section[1]/div[1]/div[3]/span")
-    fillings_button.click()
+def test_button_navigation(test_login_login_button):
+    driver = test_login_login_button
 
     # Переход в личный кабинет
-    personal_account_button = driver.find_element(By.XPATH, "//*[@id='root']/div/header/nav/a/p")
-    personal_account_button.click()
+    driver.find_element(*LoginPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
 
-    # Ожидаем загрузки страницы личного кабинета
+    # Переход из личного кабинета в конструктор
+    driver.find_element(*LoginPageLocators.CONSTRUCTOR_BUTTON).click()
+
+    # Проверка, что мы на странице конструктора
+    constructor_page = driver.find_element(*LoginPageLocators.CONSTRUCTOR_BUTTON)
+    assert constructor_page.is_displayed(), "Не удалось перейти в конструктор."
+
+    # Переход в личный кабинет
+    driver.find_element(*LoginPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
+
+    # Ожидание перехода по лого
     WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='root']/div/header/nav/a/p"))
+        EC.visibility_of_element_located(LoginPageLocators.LOGO_BUTTON)
     )
 
-    # Переход из личного кабинета по логотипу
-    logo_button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "#root > div > header > nav > div > a > svg"))
-    )
-    logo_button.click()
+    # Переход по логотипу
+    driver.find_element(*LoginPageLocators.LOGO_BUTTON).click()
 
+    # Проверка, что мы на странице логотипа
+    logo_page = driver.find_element(*LoginPageLocators.LOGO_BUTTON)
+    assert logo_page.is_displayed(), "Не удалось перейти по логотипу."
+
+def test_button_navigation(test_login_login_button):
+    driver = test_login_login_button
+
+    # Переход в личный кабинет
+    driver.find_element(*LoginPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
+
+    # Переход из личного кабинета в конструктор
+    driver.find_element(*LoginPageLocators.CONSTRUCTOR_BUTTON).click()
+
+    # Ожидание перехода по лого
     WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, "#root > div > header > nav > div > a > svg"))
+        EC.visibility_of_element_located(LoginPageLocators.CONSTRUCTOR_BUTTON)
     )
 
-    driver.quit()
+    # Переход в раздел "Булки"
+    driver.find_element(*LoginPageLocators.BUNS_TAB).click()
+
+    # Проверка, что мы в разделе "Булки"
+    buns_page = driver.find_element(*LoginPageLocators.BUNS_TAB)
+    assert buns_page.is_displayed(), "Не удалось перейти в раздел Булки."
+
+
+    # Переход в раздел "Соусы"
+    driver.find_element(*LoginPageLocators.SAUCES_TAB).click()
+
+    # Проверка, что мы в разделе "Булки"
+    sauses_page = driver.find_element(*LoginPageLocators.SAUCES_TAB)
+    assert sauses_page.is_displayed(), "Не удалось перейти в раздел Соусы."
+
+
+    # Переход в раздел "Начинки"
+    driver.find_element(*LoginPageLocators.FILLINGS_TAB).click()
+
+    # Проверка, что мы в разделе "Начинки"
+    filling_page = driver.find_element(*LoginPageLocators.FILLINGS_TAB)
+    assert filling_page.is_displayed(), "Не удалось перейти в раздел Соусы."
+
 
